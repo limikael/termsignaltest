@@ -8,8 +8,8 @@ function sleep(millis) {
 	});
 }
 
-process.on("SIGTERM",async ()=>{
-	console.log("TERM signal received");
+process.on("beforeExit",async ()=>{
+	console.log("before exit");
 
 	for (let i=0; i<10; i++) {
 		console.log("sleeping: "+i);
