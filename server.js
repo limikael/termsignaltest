@@ -8,7 +8,7 @@ function sleep(millis) {
 	});
 }
 
-process.on("beforeExit",async ()=>{
+process.on("SIGTERM",async ()=>{
 	console.log("before exit");
 
 	for (let i=0; i<10; i++) {
