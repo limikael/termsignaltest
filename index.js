@@ -1,29 +1,23 @@
 #!/usr/bin/env node
 
-const http=require("http");
+const http = require('http');
 
-function sleep(millis) {
-	return new Promise((resolve, reject)=>{
-		setTimeout(resolve,millis);
-	});
+process
+  .on('SIGTERM', shutdown('SIGTERM'))
+  .on('SIGINT', shutdown('SIGINT'))
+  .on('uncaughtException', shutdown('uncaughtException'));
+
+setInterval(console.log.bind(console, 'tick'), 1000);
+http.createServer((req, res) => res.end('hi'))
+  .listen(process.env.PORT || 3000, () => console.log('Listening'));
+
+function shutdown(signal) {
+  return (err) => {
+    console.log(`${ signal }...`);
+    if (err) console.error(err.stack || err);
+    setTimeout(() => {
+      console.log('...waited 5s, exiting.');
+      process.exit(err ? 1 : 0);
+    }, 5000).unref();
+  };
 }
-
-process.on("SIGTERM",async ()=>{
-	console.log("TERM signal received");
-
-	for (let i=0; i<10; i++) {
-		console.log("sleeping: "+i);
-		await sleep(1000);
-	}
-
-	console.log("Clean exit!");
-
-	process.exit();
-});
-
-let server=http.createServer((req,res)=>{
-	res.end("hello world");
-});
-
-server.listen(process.env.PORT);
-console.log("Listening to port: "+process.env.PORT);
